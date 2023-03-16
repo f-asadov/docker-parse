@@ -36,23 +36,16 @@ const parseDocker = (parseConfig: IConfig) => {
     spawnData.stdout.on("data", (data: Buffer) => {
         const containersIds: string[] = data.toString().split("\n");
         containersIds.pop();
-        containersIds.push('testIDforError')
 
-        // containersIds.forEach((containerId: string) => {
-        //     const swawnItem = spawn("docker", ["exec", containerId, "curl", "-X", "POST", `http://localhost:${parseConfig.port}/geoserver/rest/reload`, "--user", `${parseConfig.username}:${parseConfig.password}`]);
-        //     swawnItem.stdout.on("data", (item: Buffer) => {
-        //         console.log(item.toString());
-        //     });
-        // });
         const promises = containersIds.map((containerId: string) => {
             return new Promise<void>((resolve, reject) => {
-                //const swawnItem = spawn("docker", ["exec", containerId, "curl", "-X", "POST", `http://localhost:${parseConfig.port}/geoserver/rest/reload`, "--user", `${parseConfig.username}:${parseConfig.password}`]);
-                const swawnItem = spawn("docker", ["exec", containerId, "ls"]);
-                swawnItem.stdout.on("data", (item: Buffer) => {
+                const spawnItem = spawn("docker", ["exec", containerId, "curl", "-X", "POST", `http://localhost:${parseConfig.port}/geoserver/rest/reload`, "--user", `${parseConfig.username}:${parseConfig.password}`]);
+                
+                spawnItem.stdout.on("data", (item: Buffer) => {
                     resolve();
                 });
 
-                swawnItem.stderr.on("data", (item: Buffer) => {
+                spawnItem.stderr.on("data", (item: Buffer) => {
                     reject();
                 });
             });
@@ -69,10 +62,7 @@ const parseDocker = (parseConfig: IConfig) => {
                 });
             })
             
-
     });
-
-
 
 }
 
